@@ -77,7 +77,7 @@ Options:
 ``` {.sh}
 usage: release_android.sh [options]
 
-$ release_android.sh --aosp=/home/julien/Documents/ti/android
+$ release_android.sh --aosp=<path-to-android-root>
 
 Options:
   --aosp     Android Root path
@@ -85,4 +85,17 @@ Options:
   --config   (OPTIONAL) release ONLY for this board config file
   --help     (OPTIONAL) display usage
   --silent   (OPTIONAL) silent build commands
+```
+
+## Setup Android
+``` {.sh}
+usage: setup_android.sh [options]
+
+$ setup_android.sh --aosp==<path-to-android-root> --branch=<user-name>/update-binaries
+
+Options:
+  --aosp     Android Root path
+  --branch   Branch name
+  --clean    (OPTIONAL) clean up AOSP projects
+  --help     (OPTIONAL) display usage
 ```

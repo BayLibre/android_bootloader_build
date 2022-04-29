@@ -134,7 +134,7 @@ function usage {
     cat <<DELIM__
 usage: $(basename "$0") [options]
 
-$ $(basename "$0") --aosp=/home/julien/Documents/ti/android
+$ $(basename "$0") --aosp=<path-to-android-root>
 
 Options:
   --aosp     Android Root path
