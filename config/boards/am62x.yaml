@@ -1,0 +1,18 @@
+plat: k3
+
+tiboot3:
+  defconfig: am62x_evm_r5_defconfig
+  soc: am62x
+
+tispl:
+  defconfig: am62x_evm_a53_defconfig
+
+spd: opteed
+
+target_board: lite
+
+optee:
+  flags: CFG_ARM64_core=y
+
+android:
+  binaries_path: device/ti/am62x-prebuilts/bootloader
