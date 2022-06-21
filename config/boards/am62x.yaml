@@ -15,4 +15,4 @@ optee:
   flags: CFG_ARM64_core=y
 
 android:
-  binaries_path: device/ti/am62x-prebuilts/bootloader
+  binaries_path: vendor/ti/am62x/bootloader
