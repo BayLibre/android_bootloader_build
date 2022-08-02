@@ -84,6 +84,7 @@ Options:
   --commit   (OPTIONAL) commit binaries in AOSP
   --config   (OPTIONAL) release ONLY for this board config file
   --help     (OPTIONAL) display usage
+  --no-build (OPTIONAL) don't rebuild the images
   --silent   (OPTIONAL) silent build commands
 ```
 

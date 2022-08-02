@@ -141,6 +141,7 @@ Options:
   --commit   (OPTIONAL) commit binaries in AOSP
   --config   (OPTIONAL) release ONLY for this board config file
   --help     (OPTIONAL) display usage
+  --no-build (OPTIONAL) don't rebuild the images
   --silent   (OPTIONAL) silent build commands
 
 The changes specified in the commit msg can be read from:
@@ -152,10 +153,11 @@ function main {
     local aosp=""
     local commit=false
     local config=""
+    local build=true
     local silent=false
     local mode_list=(debug release)
 
-    local opts_args="aosp:,commit,config:,help,silent"
+    local opts_args="aosp:,commit,config:,help,no-build,silent"
     local opts=$(getopt -o '' -l "${opts_args}" -- "$@")
     eval set -- "${opts}"
 
@@ -169,6 +171,7 @@ function main {
                 shift 2 ;;
             --help) usage; exit 0 ;;
             --silent) silent=true; shift ;;
+            --no-build) build=false; shift ;;
             --) shift; break ;;
         esac
     done
@@ -199,11 +202,13 @@ function main {
             ti_binaries_path=$(config_value "${ti_config}" android.binaries_path)
             out_dir=$(out_dir "${ti_config}" "${mode}")
 
-            if [[ "${silent}" == true ]]; then
-                display_current_build "${ti_config}" "all" "${mode}"
-                build_all "${ti_config}" "true" "${mode}" &> /dev/null
-            else
-                build_all "${ti_config}" "true" "${mode}"
+            if [[ "${build}" == true ]]; then
+                if [[ "${silent}" == true ]]; then
+                    display_current_build "${ti_config}" "all" "${mode}"
+                    build_all "${ti_config}" "true" "${mode}" &> /dev/null
+                else
+                    build_all "${ti_config}" "true" "${mode}"
+                fi
             fi
 
             if [ -d "${aosp}/${ti_binaries_path}" ]; then
