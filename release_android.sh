@@ -12,25 +12,21 @@ PROJECTS_AIOT=("arm-trusted-firmware" "build" "optee-os" "ti-linux-firmware" "u-
 
 function add_commit_msg {
     local -n commits_msg_ref="$1"
-    local ti_config="$2"
+    local title_prefix="$2"
     local ti_android_out="$3"
     local toplevel=""
     local commits_msg_value=""
-
-    # ti_config: keep only basename without extension
-    ti_config=$(basename "$2")
-    ti_config="${ti_config%.*}"
 
     pushd "${ti_android_out}"
     toplevel=$(git rev-parse --sq --show-toplevel)
     if [[ -v "commits_msg_ref[${toplevel}]" ]]; then
         commits_msg_value="${commits_msg_ref[${toplevel}]}"
-        if ! [[ ${commits_msg_value} =~ ${ti_config} ]]; then
+        if ! [[ ${commits_msg_value} =~ ${title_prefix} ]]; then
             unset commits_msg_ref["${toplevel}"]
-            commits_msg_ref+=(["${toplevel}"]="${commits_msg_value}/${ti_config}")
+            commits_msg_ref+=(["${toplevel}"]="${commits_msg_value}/${title_prefix}")
         fi
     else
-        commits_msg_ref+=(["${toplevel}"]="${ti_config}")
+        commits_msg_ref+=(["${toplevel}"]="${title_prefix}")
     fi
     popd
 }
@@ -132,7 +128,11 @@ function main {
             fi
         done
 
-        add_commit_msg commits_msg "${ti_config}" "${aosp}/${ti_binaries_path}"
+        # ti_config: keep only basename without extension
+        commit_title_prefix=$(basename ${ti_config})
+        commit_title_prefix="${commit_title_prefix%.*}"
+
+        add_commit_msg commits_msg "${commit_title_prefix}" "${aosp}/${ti_binaries_path}"
     done
     popd
 
