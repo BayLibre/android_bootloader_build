@@ -10,18 +10,6 @@ source "${SRC}/commit-binaries.sh"
 
 PROJECTS_AIOT=("arm-trusted-firmware" "build" "optee-os" "ti-linux-firmware" "u-boot" "k3-image-gen")
 
-function check_local_changes {
-    local projects=("$@")
-
-    for project in "${projects[@]}"; do
-        pushd "${ROOT}/${project}"
-        if ! git diff-index --quiet HEAD; then
-            error_exit "Local changes detected in: ${project}"
-        fi
-        popd
-    done
-}
-
 function add_commit_msg {
     local -n commits_msg_ref="$1"
     local ti_config="$2"
