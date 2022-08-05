@@ -112,8 +112,8 @@ function main {
 
     pushd "${SRC}"
     for ti_config in "${configs[@]}"; do
+        ti_binaries_path=$(config_value "${ti_config}" android.binaries_path)
         for mode in "${mode_list[@]}"; do
-            ti_binaries_path=$(config_value "${ti_config}" android.binaries_path)
             out_dir=$(out_dir "${ti_config}" "${mode}")
 
             if [[ "${build}" == true ]]; then
@@ -127,12 +127,12 @@ function main {
 
             if [ -d "${aosp}/${ti_binaries_path}" ]; then
                 copy_binaries "${out_dir}" "${aosp}/${ti_binaries_path}" "${ti_config}" "${mode}"
-                add_commit_msg commits_msg "${ti_config}" "${aosp}/${ti_binaries_path}"
             else
                 error_exit "cannot copy binaries, ${aosp}/${ti_binaries_path} not found"
             fi
         done
 
+        add_commit_msg commits_msg "${ti_config}" "${aosp}/${ti_binaries_path}"
     done
     popd
 
