@@ -127,11 +127,7 @@ function main {
                 error_exit "cannot copy binaries, ${aosp}/${ti_binaries_path} not found"
             fi
         done
-
-        # ti_config: keep only basename without extension
-        commit_title_prefix=$(basename ${ti_config})
-        commit_title_prefix="${commit_title_prefix%.*}"
-
+        commit_title_prefix=$(board_name ${ti_config})
         add_commit_msg commits_msg "${commit_title_prefix}" "${aosp}/${ti_binaries_path}"
     done
     popd
