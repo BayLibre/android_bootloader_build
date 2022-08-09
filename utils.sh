@@ -25,6 +25,19 @@ function find_path {
     echo "${real_path}"
 }
 
+function check_local_changes {
+    local repo_path="$1" && shift
+    local projects=("$@")
+
+    for project in "${projects[@]}"; do
+        pushd "${repo_path}/${project}"
+        if ! git diff-index --quiet HEAD; then
+            error_exit "Local changes detected in: ${project}"
+        fi
+        popd
+    done
+}
+
 function gnueabihf_env {
     export PATH="${TOOLCHAINS}/gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf/bin:$PATH"
     export CROSS_COMPILE=arm-none-linux-gnueabihf-

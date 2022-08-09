@@ -6,115 +6,27 @@ set -o pipefail
 
 SRC=$(dirname "$(readlink -e "$0")")
 source "${SRC}/build_all.sh"
+source "${SRC}/commit-binaries.sh"
 
 PROJECTS_AIOT=("arm-trusted-firmware" "build" "optee-os" "ti-linux-firmware" "u-boot" "k3-image-gen")
 
-function check_local_changes {
-    local projects=("$@")
-
-    for project in "${projects[@]}"; do
-        pushd "${ROOT}/${project}"
-        if ! git diff-index --quiet HEAD; then
-            error_exit "Local changes detected in: ${project}"
-        fi
-        popd
-    done
-}
-
-function display_center_msg {
-    local line_length="$1"
-    local msg="$2"
-    local length=${#msg}
-    local pad=$(((line_length - length) / 2))
-
-    printf "%0.s " $(seq 1 ${pad})
-    printf "${msg}"
-
-    # if line_length is an odd number, add 1 to pad
-    if [ $(((pad * 2) + length)) != "${line_length}" ]; then
-        pad=$((pad + 1))
-    fi
-
-    printf "%0.s " $(seq 1 ${pad})
-}
-
-function display_commit_msg_header {
-    local path="$1"
-
-    printf "%0.s#" {1..90}
-    printf "\n##"
-    display_center_msg 86 "COMMIT MESSAGE IN:"
-    printf "##\n##"
-    display_center_msg 86 "${path}"
-    printf "##\n"
-    printf "%0.s#" {1..90}
-    printf "\n\n"
-}
-
-function commit_msg_body {
-    local remote_name=$1 && shift
-    local projects=("$@")
-
-    local remote_url=""
-    local head=""
-    local branch=""
-
-    local body="This update contains following changes:\n"
-    local commit_changes="${SRC}/.android_commit_changes"
-    if [ -f "${commit_changes}" ]; then
-        mapfile < "${commit_changes}" lines
-        for line in "${lines[@]}"; do
-            body+="${line}\n"
-        done
-    else
-        body+="XXXX\n"
-    fi
-
-    body+="\n"
-    for project in "${projects[@]}"; do
-        pushd "${ROOT}/${project}"
-        body+="- Project: ${project}:\n"
-
-        if [[ "${project}" != "ti-linux-firmware" && "${project}" != "k3-image-gen" ]]; then
-            remote_url=$(git remote get-url "${remote_name}")
-        else
-            remote_url=$(git remote get-url "ti")
-        fi
-
-        body+="URL: ${remote_url}\n"
-
-        branch=$(repo --color=never info . 2>&1 | perl -ne 'print "$1" if /^Manifest revision: (.*)/')
-        body+="Branch: ${branch}\n"
-
-        head=$(git log --oneline --no-decorate -1)
-        body+="HEAD: ${head}\n\n"
-        popd
-    done
-
-    echo "${body}"
-}
-
 function add_commit_msg {
     local -n commits_msg_ref="$1"
-    local ti_config="$2"
+    local title_prefix="$2"
     local ti_android_out="$3"
     local toplevel=""
     local commits_msg_value=""
-
-    # ti_config: keep only basename without extension
-    ti_config=$(basename "$2")
-    ti_config="${ti_config%.*}"
 
     pushd "${ti_android_out}"
     toplevel=$(git rev-parse --sq --show-toplevel)
     if [[ -v "commits_msg_ref[${toplevel}]" ]]; then
         commits_msg_value="${commits_msg_ref[${toplevel}]}"
-        if ! [[ ${commits_msg_value} =~ ${ti_config} ]]; then
+        if ! [[ ${commits_msg_value} =~ ${title_prefix} ]]; then
             unset commits_msg_ref["${toplevel}"]
-            commits_msg_ref+=(["${toplevel}"]="${commits_msg_value}/${ti_config}")
+            commits_msg_ref+=(["${toplevel}"]="${commits_msg_value}/${title_prefix}")
         fi
     else
-        commits_msg_ref+=(["${toplevel}"]="${ti_config}")
+        commits_msg_ref+=(["${toplevel}"]="${title_prefix}")
     fi
     popd
 }
@@ -144,8 +56,6 @@ Options:
   --no-build (OPTIONAL) don't rebuild the images
   --silent   (OPTIONAL) silent build commands
 
-The changes specified in the commit msg can be read from:
-${SRC}/.android_commit_changes
 DELIM__
 }
 
@@ -192,14 +102,14 @@ function main {
     local out_dir=""
     declare -A commits_msg
 
-    check_local_changes "${PROJECTS_AIOT[@]}"
+    check_local_changes "${ROOT}" "${PROJECTS_AIOT[@]}"
 
     check_env
 
     pushd "${SRC}"
     for ti_config in "${configs[@]}"; do
+        ti_binaries_path=$(config_value "${ti_config}" android.binaries_path)
         for mode in "${mode_list[@]}"; do
-            ti_binaries_path=$(config_value "${ti_config}" android.binaries_path)
             out_dir=$(out_dir "${ti_config}" "${mode}")
 
             if [[ "${build}" == true ]]; then
@@ -213,33 +123,31 @@ function main {
 
             if [ -d "${aosp}/${ti_binaries_path}" ]; then
                 copy_binaries "${out_dir}" "${aosp}/${ti_binaries_path}" "${ti_config}" "${mode}"
-                add_commit_msg commits_msg "${ti_config}" "${aosp}/${ti_binaries_path}"
             else
                 error_exit "cannot copy binaries, ${aosp}/${ti_binaries_path} not found"
             fi
         done
-
+        commit_title_prefix=$(board_name ${ti_config})
+        add_commit_msg commits_msg "${commit_title_prefix}" "${aosp}/${ti_binaries_path}"
     done
     popd
 
-    # commits message
-    local commit_body=$(commit_msg_body "baylibre" "${PROJECTS_AIOT[@]}")
-    local commit_title=""
-    local commit_msg=""
-    for path in "${!commits_msg[@]}"; do
-        pushd "${path}"
+    for abspath in "${!commits_msg[@]}"; do
+        commit_title_prefix="${commits_msg[${abspath}]}"
+        # we need the project name for commit_binaries(), not the
+        # full filepath
+        to_project=${abspath#${aosp}/}
 
-        # display commit
-        display_commit_msg_header "${path}"
-        commit_title="${commits_msg[${path}]}: update binaries\n\n"
-        commit_msg=$(echo -e "${commit_title}${commit_body}")
-        echo "${commit_msg}"
-
-        if [[ "${commit}" == true ]]; then
-            git add --all
-            git commit --quiet -s -m "${commit_msg}"
+        if [ "${commit}" == true ]; then
+            commit_binaries --from-repo="${ROOT}" --from-projects="${PROJECTS_AIOT[*]}" \
+                            --to-repo="${aosp}" --to-project="${to_project}" \
+                            --title-prefix="${commit_title_prefix}"
+        else
+            commit_binaries --from-repo="${ROOT}" --from-projects="${PROJECTS_AIOT[*]}" \
+                            --to-repo="${aosp}" --to-project="${to_project}" \
+                            --title-prefix="${commit_title_prefix}" \
+                            --dry-run
         fi
-        popd
     done
 }
 
