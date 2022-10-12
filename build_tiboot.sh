@@ -56,7 +56,6 @@ function build_tiboot {
 
     make SOC="${soc}" SBL="${UBOOT}/spl/u-boot-spl.bin"  SYSFW_PATH="${FW_PATH}" -j"$(nproc)"
 
-    rm x509-temp.cert
     cp tiboot3.bin "${out_dir}/tiboot3-${mode}.bin"
     popd
 
