@@ -120,12 +120,8 @@ function main {
                     build_all "${ti_config}" "true" "${mode}"
                 fi
             fi
-
-            if [ -d "${aosp}/${ti_binaries_path}" ]; then
-                copy_binaries "${out_dir}" "${aosp}/${ti_binaries_path}" "${ti_config}" "${mode}"
-            else
-                error_exit "cannot copy binaries, ${aosp}/${ti_binaries_path} not found"
-            fi
+            ! [ -d "${aosp}/${ti_binaries_path}" ] && mkdir -p "${aosp}/${ti_binaries_path}"
+            copy_binaries "${out_dir}" "${aosp}/${ti_binaries_path}" "${ti_config}" "${mode}"
         done
         commit_title_prefix=$(board_name ${ti_config})
         add_commit_msg commits_msg "${commit_title_prefix}" "${aosp}/${ti_binaries_path}"
