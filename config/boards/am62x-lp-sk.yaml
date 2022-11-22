@@ -6,6 +6,7 @@ tiboot3:
 
 tispl:
   defconfig: am62x_lpsk_a53_defconfig
+  soc: am62xx
 
 spd: opteed
 

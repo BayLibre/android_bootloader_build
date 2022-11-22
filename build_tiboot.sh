@@ -9,7 +9,8 @@ source "${SRC}/utils.sh"
 
 UBOOT="${ROOT}/u-boot"
 K3IMGEN="${ROOT}/k3-image-gen"
-FW_PATH="${ROOT}/ti-linux-firmware/ti-sysfw/ti-fs-firmware-am62x-gp.bin"
+FW_PATH="${ROOT}/ti-linux-firmware/ti-sysfw"
+TI_SECURE_DEV_PKG="${ROOT}/core-secdev-k3"
 
 function clean_dir {
     make mrproper
@@ -43,6 +44,7 @@ function build_tiboot {
 
     gnueabihf_env
     export ARCH=arm
+    export TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
 
     make "${ti_defconfig}"
     make -j"$(nproc)"
@@ -53,16 +55,15 @@ function build_tiboot {
 
     gnueabihf_env
     export ARCH=arm
+    export TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
 
-    make SOC="${soc}" SBL="${UBOOT}/spl/u-boot-spl.bin"  SYSFW_PATH="${FW_PATH}" -j"$(nproc)"
-
+    make  -j"$(nproc)" SOC="${soc}" SBL="${UBOOT}/spl/u-boot-spl.bin" SOC_TYPE=gp CONFIG=evm  SYSFW_DIR="${FW_PATH}"
     cp tiboot3.bin "${out_dir}/tiboot3-${mode}.bin"
     popd
 
     unset ARCH
     clear_vars
 }
-
 # main
 function usage {
     cat <<DELIM__
