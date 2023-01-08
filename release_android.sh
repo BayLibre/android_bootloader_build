@@ -109,6 +109,7 @@ function main {
     pushd "${SRC}"
     for ti_config in "${configs[@]}"; do
         ti_binaries_path=$(config_value "${ti_config}" android.binaries_path)
+        optee_ta_path=$(config_value "${ti_config}" optee.optee_ta_path)
         for mode in "${mode_list[@]}"; do
             out_dir=$(out_dir "${ti_config}" "${mode}")
 
@@ -125,6 +126,17 @@ function main {
         done
         commit_title_prefix=$(board_name ${ti_config})
         add_commit_msg commits_msg "${commit_title_prefix}" "${aosp}/${ti_binaries_path}"
+
+        # Build Trusted Applications
+        mkdir -p "${aosp}/${optee_ta_path}"
+        if [[ "${silent}" == true ]]; then
+            build_android_ta "${ti_config}" "true" "release" &> /dev/null
+        else
+            build_android_ta "${ti_config}" "true" "release"
+        fi
+        pushd "${out_dir}/optee-ta/"
+        cp -r * "${aosp}/${optee_ta_path}"
+        popd
     done
     popd
 
