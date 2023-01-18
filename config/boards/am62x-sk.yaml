@@ -14,6 +14,7 @@ target_board: lite
 
 optee:
   flags: CFG_ARM64_core=y
+  optee_ta_path: vendor/ti/am62x/optee/ta
 
 android:
   binaries_path: vendor/ti/am62x/bootloader/am62x-sk
