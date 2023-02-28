@@ -30,7 +30,7 @@ function build_bl31 {
     export ARCH=aarch64
     aarch64_env
 
-    make E=0 PLAT="${TI_PLAT}" TARGET_BOARD="${TI_TARGET}" SPD="${TI_SPD}"
+    make E=0 PLAT="${TI_PLAT}" TARGET_BOARD="${TI_TARGET}" SPD="${TI_SPD}" CFLAGS+="-DK3_PM_SYSTEM_SUSPEND=1 "
 
     pushd "build/"${TI_PLAT}"/"${TI_TARGET}"/release"
 
