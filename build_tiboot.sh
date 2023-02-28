@@ -21,6 +21,7 @@ function build_tiboot {
     local mode="${3:-release}"
     local out_dir=$(out_dir "$1" "${mode}")
     local soc=$(config_value "$1" tiboot3.soc)
+    local hsfs=$(config_value "$1" secure.hsfs)
 
     local ti_defconfig=""
     ti_defconfig=$(config_value "$1" tiboot3.defconfig)
@@ -58,7 +59,13 @@ function build_tiboot {
     export TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
 
     make  -j"$(nproc)" SOC="${soc}" SBL="${UBOOT}/spl/u-boot-spl.bin" SOC_TYPE=gp CONFIG=evm  SYSFW_DIR="${FW_PATH}"
-    cp tiboot3.bin "${out_dir}/tiboot3-${mode}.bin"
+    cp tiboot3-am62x-gp-evm.bin "${out_dir}/tiboot3-${mode}-gp.bin"
+    if [[ "${hsfs}" == "True" ]]; then
+        echo "Generate HS-FS binary "
+        make  -j"$(nproc)" SOC="${soc}" SBL="${UBOOT}/spl/u-boot-spl.bin" SOC_TYPE=hs-fs CONFIG=evm  SYSFW_DIR="${FW_PATH}"
+        cp tiboot3-am62x-hs-fs-evm.bin "${out_dir}/tiboot3-${mode}-hsfs.bin"
+    fi
+
     popd
 
     unset ARCH
