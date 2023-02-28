@@ -18,3 +18,6 @@ optee:
 
 android:
   binaries_path: vendor/ti/am62x/bootloader/am62x-lp-sk
+
+secure:
+  hsfs: true
