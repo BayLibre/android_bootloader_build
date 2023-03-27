@@ -77,7 +77,7 @@ function build_android_ta {
     android_ta_paths+=("${xtest}/os_test/5b9e0e40-2636-11e1-ad9e-0002a5d5c51b.ta")
     android_ta_paths+=("${xtest}/rpc_test/d17f73a0-36ef-11e1-984a-0002a5d5c51b.ta")
     android_ta_paths+=("${xtest}/sdp_basic/12345678-5b69-11e4-9dbb-101f74f00099.ta")
-    android_ta_paths+=("${xtest}/sha_perf/614789f2-39c0-4ebf-b235-92b32ac107ed.ta")
+    android_ta_paths+=("${xtest}/hash_perf/614789f2-39c0-4ebf-b235-92b32ac107ed.ta")
     android_ta_paths+=("${xtest}/sims/e6a33ed4-562b-463a-bb7e-ff5e15a493c8.ta")
     android_ta_paths+=("${xtest}/sims_keepalive/a4c04d50-f180-11e8-8eb2-f2801f1b9fd1.ta")
     android_ta_paths+=("${xtest}/socket/873bcd08-c2c3-11e6-a937-d0bf9c45c61c.ta")
