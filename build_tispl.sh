@@ -9,6 +9,7 @@ source "${SRC}/utils.sh"
 
 UBOOT="${ROOT}/u-boot"
 TI_SECURE_DEV_PKG="${ROOT}/core-secdev-k3"
+BINMAN_INDIRS="${ROOT}/ti-linux-firmware"
 
 function clean_tispl {
     make clean
@@ -31,6 +32,7 @@ function build_tispl {
     export ARCH=arm
     aarch64_env
     export TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
+    export BINMAN_INDIRS
 
     make -j$(nproc) "${DEFCONFIG}"
     make ATF="${out_dir}/bl31-${mode}.bin" TEE="${out_dir}/tee-${mode}.bin" DM="${TI_FW_DM}" TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"

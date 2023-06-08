@@ -10,6 +10,7 @@ source "${SRC}/utils.sh"
 UBOOT="${ROOT}/u-boot"
 K3IMGEN="${ROOT}/k3-image-gen"
 FW_PATH="${ROOT}/ti-linux-firmware/ti-sysfw"
+BINMAN_INDIRS="${ROOT}/ti-linux-firmware"
 TI_SECURE_DEV_PKG="${ROOT}/core-secdev-k3"
 
 function clean_dir {
@@ -46,6 +47,7 @@ function build_tiboot {
     gnueabihf_env
     export ARCH=arm
     export TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
+    export BINMAN_INDIRS
 
     make "${ti_defconfig}"
     make -j"$(nproc)"
