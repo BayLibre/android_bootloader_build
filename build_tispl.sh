@@ -35,7 +35,7 @@ function build_tispl {
     export BINMAN_INDIRS
 
     make -j$(nproc) "${DEFCONFIG}"
-    make ATF="${out_dir}/bl31-${mode}.bin" TEE="${out_dir}/tee-${mode}.bin" DM="${TI_FW_DM}" TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
+    make BL31="${out_dir}/bl31-${mode}.bin" TEE="${out_dir}/tee-${mode}.bin" DM="${TI_FW_DM}" TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
 
     cp tispl.bin "${out_dir}"/tispl-"${mode}".bin
     cp u-boot.img "${out_dir}"/u-boot-"${mode}".img
