@@ -44,6 +44,15 @@ function copy_binaries {
 	    cp "${ti_out}/tispl-debug.bin" "${ti_android_out}/tispl.bin"
 	    cp "${ti_out}/u-boot-debug.img" "${ti_android_out}/u-boot.img"
     fi
+
+    if [[ "${mode}" == "release" ]]; then
+        cp "${ti_out}/tiboot3-release-gp.bin" "${ti_android_out}/tiboot3.bin"
+        if [[ "${hsfs}" == "True" ]]; then
+            cp "${ti_out}/tiboot3-release-hsfs.bin" "${ti_android_out}/tiboot3-hsfs.bin"
+        fi
+	    cp "${ti_out}/tispl-release.bin" "${ti_android_out}/tispl.bin"
+	    cp "${ti_out}/u-boot-release.img" "${ti_android_out}/u-boot.img"
+    fi
 }
 
 function usage {
