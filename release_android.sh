@@ -78,7 +78,7 @@ function main {
     local config=""
     local build=true
     local silent=false
-    local mode_list=(debug release)
+    local mode_list=(release)
 
     local opts_args="aosp:,commit,config:,help,no-build,silent"
     local opts=$(getopt -o '' -l "${opts_args}" -- "$@")
