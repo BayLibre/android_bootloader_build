@@ -25,6 +25,9 @@ function build_tiboot {
     local ti_defconfig=""
     ti_defconfig=$(config_value "$1" tiboot3.defconfig)
 
+    local ti_defconfig_fragment=""
+    ti_defconfig_fragment=$(config_value "$1" tiboot3.defconfig_fragment)
+
     display_current_build "$1" "tiboot3" "${mode}"
 
     if [ -z "${ti_defconfig}" ]; then
@@ -47,6 +50,9 @@ function build_tiboot {
     export BINMAN_INDIRS
 
     make "${ti_defconfig}"
+    if [[ "${ti_defconfig_fragment}" != "" ]]; then
+        make "${ti_defconfig_fragment}"
+    fi
     make -j"$(nproc)"
 
     cp tiboot3-am62x-gp-evm.bin "${out_dir}/tiboot3-${mode}-gp.bin"
