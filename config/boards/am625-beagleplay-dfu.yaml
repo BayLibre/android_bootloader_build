@@ -1,0 +1,25 @@
+plat: k3
+
+tiboot3:
+  defconfig: am62x_evm_r5_usbdfu_defconfig
+  defconfig_fragments: am625_beagleplay_r5.config am625_beagleplay_android_r5.config
+  soc: am62x
+
+tispl:
+  defconfig: am62x_evm_a53_defconfig
+  defconfig_fragments: am625_beagleplay_a53.config am62x_android_a53.config am625_beagleplay_android_a53.config
+  soc: am62xx
+
+spd: opteed
+
+target_board: lite
+
+optee:
+  flags: CFG_ARM64_core=y
+  optee_ta_path: vendor/ti/am62x/optee/ta
+
+android:
+  binaries_path: vendor/ti/am62x/bootloader/am625-beagleplay-dfu
+
+secure:
+  hsfs: false
