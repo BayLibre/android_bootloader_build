@@ -8,10 +8,8 @@ SRC=$(dirname "$(readlink -e "$0")")
 source "${SRC}/utils.sh"
 
 UBOOT="${ROOT}/u-boot"
-K3IMGEN="${ROOT}/k3-image-gen"
 FW_PATH="${ROOT}/ti-linux-firmware/ti-sysfw"
 BINMAN_INDIRS="${ROOT}/ti-linux-firmware"
-TI_SECURE_DEV_PKG="${ROOT}/core-secdev-k3"
 
 function clean_dir {
     make mrproper
@@ -46,25 +44,14 @@ function build_tiboot {
 
     gnueabihf_env
     export ARCH=arm
-    export TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
     export BINMAN_INDIRS
 
     make "${ti_defconfig}"
     make -j"$(nproc)"
-    popd
 
-    pushd "${K3IMGEN}"
-    [[ "${clean}" == true ]] && clean_dir
-
-    gnueabihf_env
-    export ARCH=arm
-    export TI_SECURE_DEV_PKG="${TI_SECURE_DEV_PKG}"
-
-    make  -j"$(nproc)" SOC="${soc}" SBL="${UBOOT}/spl/u-boot-spl.bin" SOC_TYPE=gp CONFIG=evm  SYSFW_DIR="${FW_PATH}"
     cp tiboot3-am62x-gp-evm.bin "${out_dir}/tiboot3-${mode}-gp.bin"
     if [[ "${hsfs}" == "True" ]]; then
-        echo "Generate HS-FS binary "
-        make  -j"$(nproc)" SOC="${soc}" SBL="${UBOOT}/spl/u-boot-spl.bin" SOC_TYPE=hs-fs CONFIG=evm  SYSFW_DIR="${FW_PATH}"
+        echo "Copy HS-FS binary "
         cp tiboot3-am62x-hs-fs-evm.bin "${out_dir}/tiboot3-${mode}-hsfs.bin"
     fi
 
