@@ -78,7 +78,7 @@ function commit_msg_body {
         pushd "${from_repo}/${project}"
         body+="- Project: ${project}:\n"
 
-        if [[ "${project}" != "ti-linux-firmware" && "${project}" != "k3-image-gen" ]]; then
+        if [[ "${project}" != "ti-linux-firmware" ]]; then
             remote_url=$(git remote get-url "${remote_name}")
         else
             remote_url=$(git remote get-url "ti")
