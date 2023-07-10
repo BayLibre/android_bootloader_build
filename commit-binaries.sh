@@ -78,10 +78,12 @@ function commit_msg_body {
         pushd "${from_repo}/${project}"
         body+="- Project: ${project}:\n"
 
-        if [[ "${project}" != "ti-linux-firmware" ]]; then
-            remote_url=$(git remote get-url "${remote_name}")
-        else
+        if [[ "${project}" == "ti-linux-firmware" ]]; then
             remote_url=$(git remote get-url "ti")
+        elif [[ "${project}" == "optee-os" || "${project}" == "optee-ta/optee_test" ]]; then
+            remote_url=$(git remote get-url "github")
+        else
+            remote_url=$(git remote get-url "${remote_name}")
         fi
 
         body+="URL: ${remote_url}\n"
