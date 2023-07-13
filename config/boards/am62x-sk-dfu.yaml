@@ -6,6 +6,7 @@ tiboot3:
 
 tispl:
   defconfig: am62x_evm_a53_defconfig
+  defconfig_fragment: am62x_android_a53.config
   soc: am62xx
 
 spd: opteed
