@@ -17,7 +17,7 @@ function clean_tispl {
 function build_tispl {
     local TI_PLAT=$(config_value "$1" plat)
     local DEFCONFIG=$(config_value "$1" tispl.defconfig)
-    local DEFCONFIG_FRAGMENT=$(config_value "$1" tispl.defconfig_fragment)
+    local DEFCONFIG_FRAGMENTS=($(config_value "$1" tispl.defconfig_fragments))
     local SOC=$(config_value "$1" tispl.soc)
     local clean="${2:-false}"
     local mode="${3:-release}"
@@ -33,8 +33,8 @@ function build_tispl {
     export BINMAN_INDIRS
 
     make -j$(nproc) "${DEFCONFIG}"
-    if [[ "${DEFCONFIG_FRAGMENT}" != "" ]]; then
-        make -j$(nproc) "${DEFCONFIG_FRAGMENT}"
+    if [[ "${#DEFCONFIG_FRAGMENTS[@]}" -gt 0 ]]; then
+        make -j$(nproc) ${DEFCONFIG_FRAGMENTS[@]}
     fi
     make -j$(nproc) BL31="${out_dir}/bl31-${mode}.bin" TEE="${out_dir}/tee-${mode}.bin"
 

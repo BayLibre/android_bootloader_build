@@ -25,8 +25,8 @@ function build_tiboot {
     local ti_defconfig=""
     ti_defconfig=$(config_value "$1" tiboot3.defconfig)
 
-    local ti_defconfig_fragment=""
-    ti_defconfig_fragment=$(config_value "$1" tiboot3.defconfig_fragment)
+    local ti_defconfig_fragments=()
+    ti_defconfig_fragments=($(config_value "$1" tiboot3.defconfig_fragments))
 
     display_current_build "$1" "tiboot3" "${mode}"
 
@@ -50,8 +50,8 @@ function build_tiboot {
     export BINMAN_INDIRS
 
     make "${ti_defconfig}"
-    if [[ "${ti_defconfig_fragment}" != "" ]]; then
-        make "${ti_defconfig_fragment}"
+    if [[ "${#ti_defconfig_fragments[@]}" -gt 0 ]]; then
+        make ${ti_defconfig_fragments[@]}
     fi
     make -j"$(nproc)"
 
