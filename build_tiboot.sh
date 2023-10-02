@@ -55,10 +55,10 @@ function build_tiboot {
     fi
     make -j"$(nproc)"
 
-    cp tiboot3-am62x-gp-evm.bin "${out_dir}/tiboot3-${mode}-gp.bin"
+    cp tiboot3-${soc}-gp-evm.bin "${out_dir}/tiboot3-${mode}-gp.bin"
     if [[ "${hsfs}" == "True" ]]; then
         echo "Copy HS-FS binary "
-        cp tiboot3-am62x-hs-fs-evm.bin "${out_dir}/tiboot3-${mode}-hsfs.bin"
+        cp tiboot3-${soc}-hs-fs-evm.bin "${out_dir}/tiboot3-${mode}-hsfs.bin"
     fi
 
     popd
