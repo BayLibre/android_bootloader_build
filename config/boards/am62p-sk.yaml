@@ -1,0 +1,24 @@
+plat: k3
+
+tiboot3:
+  defconfig: am62px_evm_r5_defconfig
+  soc: am62px
+
+tispl:
+  defconfig: am62px_evm_a53_defconfig
+  defconfig_fragments: am62x_android_a53.config
+  soc: am62px
+
+spd: opteed
+
+target_board: lite
+
+optee:
+  flags: CFG_ARM64_core=y
+  optee_ta_path: vendor/ti/am62x/optee/ta
+
+android:
+  binaries_path: vendor/ti/am62x/bootloader/am62px-sk
+
+secure:
+  hsfs: true
