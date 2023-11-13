@@ -34,10 +34,13 @@ function add_commit_msg {
 function copy_binaries {
     local ti_out="$1"
     local ti_android_out="$2"
+    local gp=$(config_value "$1" secure.gp)
     local hsfs=$(config_value "$3" secure.hsfs)
     local mode="$4"
     if [[ "${mode}" == "debug" ]]; then
-        cp "${ti_out}/tiboot3-debug-gp.bin" "${ti_android_out}/tiboot3.bin"
+        if [[ "${gp}" == "True" ]]; then
+            cp "${ti_out}/tiboot3-debug-gp.bin" "${ti_android_out}/tiboot3.bin"
+        fi
         if [[ "${hsfs}" == "True" ]]; then
             cp "${ti_out}/tiboot3-debug-hsfs.bin" "${ti_android_out}/tiboot3-hsfs.bin"
         fi
@@ -46,7 +49,9 @@ function copy_binaries {
     fi
 
     if [[ "${mode}" == "release" ]]; then
-        cp "${ti_out}/tiboot3-release-gp.bin" "${ti_android_out}/tiboot3.bin"
+        if [[ "${gp}" == "True" ]]; then
+            cp "${ti_out}/tiboot3-release-gp.bin" "${ti_android_out}/tiboot3.bin"
+        fi
         if [[ "${hsfs}" == "True" ]]; then
             cp "${ti_out}/tiboot3-release-hsfs.bin" "${ti_android_out}/tiboot3-hsfs.bin"
         fi

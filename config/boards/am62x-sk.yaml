@@ -21,5 +21,6 @@ android:
   binaries_path: vendor/ti/am62x/bootloader/am62x-sk
 
 secure:
+  gp: true
   hsfs: true
   

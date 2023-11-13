@@ -22,4 +22,5 @@ android:
   binaries_path: vendor/ti/am62x/bootloader/am625-beagleplay
 
 secure:
+  gp: true
   hsfs: false

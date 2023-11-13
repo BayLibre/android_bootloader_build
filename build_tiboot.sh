@@ -20,6 +20,7 @@ function build_tiboot {
     local mode="${3:-release}"
     local out_dir=$(out_dir "$1" "${mode}")
     local soc=$(config_value "$1" tiboot3.soc)
+    local gp=$(config_value "$1" secure.gp)
     local hsfs=$(config_value "$1" secure.hsfs)
 
     local ti_defconfig=""
@@ -55,7 +56,10 @@ function build_tiboot {
     fi
     make -j"$(nproc)"
 
-    cp tiboot3-${soc}-gp-evm.bin "${out_dir}/tiboot3-${mode}-gp.bin"
+    if [[ "${gp}" == "True" ]]; then
+        echo "Copy GP binary "
+        cp tiboot3-${soc}-gp-evm.bin "${out_dir}/tiboot3-${mode}-gp.bin"
+    fi
     if [[ "${hsfs}" == "True" ]]; then
         echo "Copy HS-FS binary "
         cp tiboot3-${soc}-hs-fs-evm.bin "${out_dir}/tiboot3-${mode}-hsfs.bin"
