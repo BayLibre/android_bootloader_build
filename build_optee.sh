@@ -27,6 +27,7 @@ function get_optee_flags {
         "debug") flags+=" DEBUG=1" ;;
     esac
     flags+=" CFG_HMAC_64_1024_RANGE=y CFG_FAULT_MITIGATION=n CFG_TA_OPTEE_CORE_API_COMPAT_1_1=y"
+    flags+=" CFG_DT=y"
     flags+=" PLATFORM=${ti_plat}"
 
     optee_flags_ref="${flags}"
