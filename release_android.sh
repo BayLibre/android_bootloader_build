@@ -34,7 +34,7 @@ function add_commit_msg {
 function copy_binaries {
     local ti_out="$1"
     local ti_android_out="$2"
-    local gp=$(config_value "$1" secure.gp)
+    local gp=$(config_value "$3" secure.gp)
     local hsfs=$(config_value "$3" secure.hsfs)
     local mode="$4"
     if [[ "${mode}" == "debug" ]]; then
