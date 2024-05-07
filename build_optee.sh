@@ -113,11 +113,6 @@ function build_optee {
     display_current_build "$1" "optee" "${mode}"
 
     get_optee_flags "$1" "${mode}" optee_flags
-    if [[ "${mode}" == "debug" ]]; then
-        optee_flags+=" DEBUG=1"
-    else
-        optee_flags+=" DEBUG=0 CFG_TEE_CORE_LOG_LEVEL=0 CFG_UART_ENABLE=n"
-    fi
 
     # setup env
     ! [ -d "${out_dir}" ] && mkdir -p "${out_dir}"
