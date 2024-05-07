@@ -1,7 +1,8 @@
 plat: k3
 
 tiboot3:
-  defconfig: am62x_lpsk_r5_usbdfu_defconfig
+  defconfig: am62x_lpsk_r5_defconfig
+  defconfig_fragments: am62x_r5_usbdfu.config
   soc: am62x
 
 tispl:
