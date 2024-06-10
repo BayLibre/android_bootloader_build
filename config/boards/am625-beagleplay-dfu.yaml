@@ -7,7 +7,7 @@ tiboot3:
 
 tispl:
   defconfig: am62x_evm_a53_defconfig
-  defconfig_fragments: am625_beagleplay_a53.config am62x_android_a53.config am625_beagleplay_android_a53.config
+  defconfig_fragments: am625_beagleplay_a53.config am62x_a53_android.config am625_beagleplay_android_a53.config
   soc: am62xx
 
 spd: opteed
