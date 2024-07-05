@@ -18,7 +18,7 @@ optee:
   optee_ta_path: vendor/ti/am62x/optee/ta
 
 android:
-  binaries_path: vendor/ti/am62x/bootloader/am62px-sk
+  binaries_path: vendor/ti/am62x/bootloader-2024.04/am62px-sk
 
 secure:
   gp: false
