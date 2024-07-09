@@ -50,7 +50,7 @@ function gnueabihf_env {
 function check_gnueabihf {
     if ! [ -d "${TOOLCHAINS}/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-linux-gnueabihf" ]; then
         pushd $TOOLCHAINS
-        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz?rev=adb0c0238c934aeeaa12c09609c5e6fc&hash=B119DA50CEFE6EE8E0E98B4ADCA4C55F
+        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
         tar -xvf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
         popd
     fi
@@ -65,7 +65,7 @@ function aarch64_env {
 function check_aarch64 {
     if ! [ -d "${TOOLCHAINS}/arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-linux-gnu" ]; then
         pushd "${TOOLCHAINS}"
-        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz?rev=22c39fc25e5541818967b4ff5a09ef3e&hash=B9FEDC2947EB21151985C2DC534ECCEC
+        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
         tar -xvf arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
         popd
     fi
