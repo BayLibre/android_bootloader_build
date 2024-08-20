@@ -1,12 +1,13 @@
 plat: k3
 
 tiboot3:
-  defconfig: am62px_evm_r5_usbdfu_defconfig
+  defconfig: am62px_evm_r5_defconfig
+  defconfig_fragments: am62x_r5_usbdfu.config
   soc: am62px
 
 tispl:
   defconfig: am62px_evm_a53_defconfig
-  defconfig_fragments: am62x_android_a53.config
+  defconfig_fragments: am62x_a53_android.config
   soc: am62px
 
 spd: opteed
@@ -18,7 +19,7 @@ optee:
   optee_ta_path: vendor/ti/am62x/optee/ta
 
 android:
-  binaries_path: vendor/ti/am62x/bootloader/am62px-sk-dfu
+  binaries_path: vendor/ti/am62x/bootloader-2024.04/am62px-sk-dfu
 
 secure:
   gp: false

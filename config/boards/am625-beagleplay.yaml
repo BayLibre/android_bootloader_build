@@ -1,13 +1,12 @@
 plat: k3
 
 tiboot3:
-  defconfig: am62x_evm_r5_defconfig
-  defconfig_fragments: am625_beagleplay_r5.config am625_beagleplay_android_r5.config
+  defconfig: am62x_beagleplay_r5_defconfig
   soc: am62x
 
 tispl:
-  defconfig: am62x_evm_a53_defconfig
-  defconfig_fragments: am625_beagleplay_a53.config am62x_android_a53.config am625_beagleplay_android_a53.config
+  defconfig: am62x_beagleplay_a53_defconfig
+  defconfig_fragments: am62x_a53_android.config
   soc: am62xx
 
 spd: opteed
@@ -19,7 +18,7 @@ optee:
   optee_ta_path: vendor/ti/am62x/optee/ta
 
 android:
-  binaries_path: vendor/ti/am62x/bootloader/am625-beagleplay
+  binaries_path: vendor/ti/am62x/bootloader-2024.04/am625-beagleplay
 
 secure:
   gp: true
