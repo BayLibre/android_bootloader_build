@@ -15,6 +15,7 @@ $ $(basename "$0") --from-repo=<repo root directory> --to-repo=<repo root direct
 Options:
   --from-repo     Absolute path to the source repo
   --from-projects (OPTIONAL) space-separated list of relative source projects. Defaults to all
+  --from-remotes  (OPTIONAL) space-separated list of remotes to fetch the version information from. Defaults to "baylibre"
   --to-repo       Absolute path to the destination repo
   --to-project    Relative path in the destination repo where git commit is ran
   --title-prefix  (OPTIONAL) commit message title prefix. Defaults to "generic"
@@ -102,7 +103,7 @@ function display_commit_msg_header {
 }
 
 function commit_msg_body {
-    local remote_name=$1 && shift
+    local remote_name_list="$1" && shift
     local from_repo=$1 && shift
     local projects=("$@")
 
@@ -114,13 +115,18 @@ function commit_msg_body {
         pushd "${from_repo}/${project}"
         body+="- Project: ${project}:\n"
 
-        if [[ "${project}" == "ti-linux-firmware" || "${project}" == "arm-trusted-firmware" ]]; then
-            remote_url=$(git remote get-url "ti")
-        elif [[ "${project}" == "optee-os" || "${project}" == "optee-ta/optee_test" ]]; then
-            remote_url=$(git remote get-url "github")
-        else
-            remote_url=$(git remote get-url "${remote_name}")
-        fi
+        for remote_name in $remote_name_list; do
+            # Temporarily disable exit on error since
+            # the remote name might not exist
+            set -x
+            remote_url=$(git remote get-url $remote_name)
+            set +x
+            if [[ "$remote_url" != "" ]]; then
+                # We found the url matching the remote
+                # early exit the loop
+                break
+            fi
+        done
 
         body+="URL: ${remote_url}\n"
 
@@ -138,12 +144,13 @@ function commit_msg_body {
 function commit_binaries {
     local from_repo=""
     local from_projects=""
+    local from_remotes=""
     local to_repo=""
     local to_project=""
     local title_prefix="generic"
     local dry_run=false
 
-    local opts_args="from-repo:,from-projects:,to-repo:,to-project:,title-prefix:,dry-run,help"
+    local opts_args="from-repo:,from-projects:,from-remotes:,to-repo:,to-project:,title-prefix:,dry-run,help"
     local opts=$(getopt -o '' -l "${opts_args}" -- "$@")
     eval set -- "${opts}"
 
@@ -151,6 +158,7 @@ function commit_binaries {
         case "$1" in
             --from-repo) from_repo=$(find_path "$2"); shift 2 ;;
             --from-projects) from_projects="$2"; shift 2;;
+            --from-remotes) from_remotes="$2"; shift 2;;
             --to-repo) to_repo=$(find_path "$2"); shift 2 ;;
             --to-project) to_project="$2"; shift 2;;
             --title-prefix) title_prefix="$2"; shift 2;;
@@ -173,7 +181,7 @@ function commit_binaries {
     check_local_changes "${from_repo}" $from_projects
 
     # commits message
-    local commit_body=$(commit_msg_body "baylibre" $from_repo $from_projects)
+    local commit_body=$(commit_msg_body "$from_remotes" $from_repo $from_projects)
 
     local commit_title=""
     local commit_msg=""
