@@ -5,7 +5,6 @@ set -u
 set -o pipefail
 
 SRC=$(dirname "$(readlink -e "$0")")
-source "${SRC}/utils.sh"
 
 function usage {
     cat <<DELIM__
@@ -26,6 +25,43 @@ Examples:
   $ $(basename "$0") --from-repo=/home/user/src/android-common-kernel --from-projects='common hikey-modules' \\
                        --to-repo=/home/user/src/aosp --to-project=device/amlogic/yukawa-kernel
 DELIM__
+}
+
+function error {
+    local error="$1"
+    printf "\033[0;31mERROR:\033[0m ${error}\n\n"
+}
+
+function error_usage_exit {
+    error "$1"
+    usage
+    exit 1
+}
+
+function find_path {
+    local path="$1"
+    local real_path=""
+    if [ -e "${path}" ]; then
+        real_path=$(readlink -e "${path}")
+    fi
+    echo "${real_path}"
+}
+
+function check_local_changes {
+    local repo_path="$1" && shift
+    local projects=("$@")
+
+    for project in "${projects[@]}"; do
+        pushd "${repo_path}/${project}"
+        # always run status before to trigger an index rebuild
+        # This is important when many files have a different mtime
+        # see: https://github.com/MestreLion/git-tools/issues/38#issuecomment-894182421
+        git status
+        if ! git diff --quiet HEAD; then
+            error_exit "Local changes detected in: ${project}"
+        fi
+        popd
+    done
 }
 
 function all_projects_for_repo {
