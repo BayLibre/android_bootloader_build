@@ -9,6 +9,7 @@ source "${SRC}/build_all.sh"
 source "${SRC}/commit-binaries.sh"
 
 PROJECTS_AIOT=("arm-trusted-firmware" "build" "optee-os" "ti-linux-firmware" "u-boot" "optee-ta/kmgk" "optee-ta/optee_test")
+PROJECTS_REMOTES="baylibre ti github"
 
 function add_commit_msg {
     local -n commits_msg_ref="$1"
@@ -166,10 +167,12 @@ function main {
 
         if [ "${commit}" == true ]; then
             commit_binaries --from-repo="${ROOT}" --from-projects="${PROJECTS_AIOT[*]}" \
+                            --from-remotes="${PROJECTS_REMOTES}" \
                             --to-repo="${aosp}" --to-project="${to_project}" \
                             --title-prefix="${commit_title_prefix}"
         else
             commit_binaries --from-repo="${ROOT}" --from-projects="${PROJECTS_AIOT[*]}" \
+                            --from-remotes="${PROJECTS_REMOTES}" \
                             --to-repo="${aosp}" --to-project="${to_project}" \
                             --title-prefix="${commit_title_prefix}" \
                             --dry-run
