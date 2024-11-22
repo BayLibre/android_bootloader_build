@@ -9,7 +9,7 @@ source "${SRC}/build_all.sh"
 source "${SRC}/commit-binaries.sh"
 
 PROJECTS_AIOT=("arm-trusted-firmware" "build" "optee-os" "ti-linux-firmware" "u-boot" "optee-ta/kmgk" "optee-ta/optee_test")
-PROJECTS_REMOTES="baylibre ti github"
+PROJECTS_REMOTES="baylibre ti github tf-a"
 
 function add_commit_msg {
     local -n commits_msg_ref="$1"
