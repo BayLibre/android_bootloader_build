@@ -111,16 +111,20 @@ function commit_msg_body {
     local head=""
     local branch=""
 
+    # Temporarily disable strict script mode
+    # Because some functions might fail.
+    # When fails happens, we don't want the whole function to abort
+    # It's better to have a partial commit message than an empty one
+    set +e
+    set +u
+    set +o pipefail
+
     for project in "${projects[@]}"; do
         pushd "${from_repo}/${project}"
         body+="- Project: ${project}:\n"
 
         for remote_name in $remote_name_list; do
-            # Temporarily disable exit on error since
-            # the remote name might not exist
-            set +e
             remote_url=$(git remote get-url $remote_name)
-            set -e
             if [[ "$remote_url" != "" ]]; then
                 # We found the url matching the remote
                 # early exit the loop
@@ -137,6 +141,10 @@ function commit_msg_body {
         body+="HEAD: ${head}\n\n"
         popd
     done
+
+    set -e
+    set -u
+    set -o pipefail
 
     echo "${body}"
 }
