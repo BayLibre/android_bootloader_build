@@ -43,30 +43,30 @@ function check_local_changes {
 }
 
 function gnueabihf_env {
-    export PATH="${TOOLCHAINS}/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-linux-gnueabihf/bin:$PATH"
+    export PATH="${TOOLCHAINS}/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-linux-gnueabihf/bin:$PATH"
     export CROSS_COMPILE=arm-none-linux-gnueabihf-
 }
 
 function check_gnueabihf {
-    if ! [ -d "${TOOLCHAINS}/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-linux-gnueabihf" ]; then
+    if ! [ -d "${TOOLCHAINS}/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-linux-gnueabihf" ]; then
         pushd $TOOLCHAINS
-        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
-        tar -xvf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
+        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
+        tar -xvf arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
         popd
     fi
 }
 
 function aarch64_env {
-    export PATH="${TOOLCHAINS}/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-linux-gnu/bin:$PATH"
+    export PATH="${TOOLCHAINS}/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/bin:$PATH"
     export CROSS_COMPILE=aarch64-none-linux-gnu-
     export CROSS_COMPILE64=aarch64-none-linux-gnu-
 }
 
 function check_aarch64 {
-    if ! [ -d "${TOOLCHAINS}/arm-gnu-toolchain-13.2.Rel1-x86_64-aarch64-none-linux-gnu" ]; then
+    if ! [ -d "${TOOLCHAINS}/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu" ]; then
         pushd "${TOOLCHAINS}"
-        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
-        tar -xvf arm-gnu-toolchain-13.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
+        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
+        tar -xvf arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
         popd
     fi
 }
