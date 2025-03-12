@@ -26,7 +26,7 @@ function get_optee_flags {
         "release") flags+=" DEBUG=0 CFG_TEE_CORE_LOG_LEVEL=0 CFG_UART_ENABLE=n" ;;
         "debug") flags+=" DEBUG=1" ;;
     esac
-    flags+=" CFG_HMAC_64_1024_RANGE=y CFG_FAULT_MITIGATION=n CFG_TA_OPTEE_CORE_API_COMPAT_1_1=y"
+    flags+=" CFG_RSA_PUB_EXPONENT_3=y CFG_HMAC_64_1024_RANGE=y CFG_FAULT_MITIGATION=n CFG_TA_OPTEE_CORE_API_COMPAT_1_1=y"
     flags+=" CFG_DT=y"
     flags+=" PLATFORM=${ti_plat}"
 
