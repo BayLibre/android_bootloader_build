@@ -21,7 +21,7 @@ optee:
   plat: k3-am62x
 
 android:
-  binaries_path: vendor/ti/am62x/bootloader/2024.04/am625-beagleplay
+  binaries_path: vendor/ti/am62x/bootloader/2025.01/am625-beagleplay
 
 secure:
   gp: true

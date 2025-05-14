@@ -21,7 +21,7 @@ optee:
   plat: k3-j784s4
 
 android:
-  binaries_path: vendor/ti/j784s4/bootloader/2024.04/j784s4-evm
+  binaries_path: vendor/ti/j784s4/bootloader/2025.01/j784s4-evm
 
 secure:
   gp: true
