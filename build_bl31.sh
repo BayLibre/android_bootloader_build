@@ -19,6 +19,7 @@ function build_bl31 {
     local TI_SPD=$(config_value "$1" spd)
     local TI_TARGET=$(config_value "$1" target_board)
     local TI_LPM=$(config_value "$1" ti_lpm)
+    local TI_UART=$(config_value "$1" uart)
     local clean="${2:-false}"
     local mode="${3:-release}"
     local out_dir=$(out_dir "$1" "${mode}")
@@ -35,6 +36,10 @@ function build_bl31 {
 
     if [[ "${TI_LPM}" == True ]]; then
 	    EXTRA_FLAGS+=(CFLAGS+='-DK3_PM_SYSTEM_SUSPEND=1')
+    fi
+
+    if [[ -n "${TI_UART}" ]]; then
+	    EXTRA_FLAGS+=(K3_USART=${TI_UART})
     fi
 
     make -j$(nproc) E=0 PLAT="${TI_PLAT}" TARGET_BOARD="${TI_TARGET}" SPD="${TI_SPD}" ${EXTRA_FLAGS[@]}

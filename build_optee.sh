@@ -18,6 +18,7 @@ function clean_optee {
 function get_optee_flags {
     local ti_plat=$(config_value "$1" plat)
     local flags=$(config_value "$1" optee.flags)
+    local ti_uart=$(config_value "$1" uart)
     local mode="$2"
     local -n optee_flags_ref="$3"
 
@@ -29,6 +30,9 @@ function get_optee_flags {
     flags+=" CFG_RSA_PUB_EXPONENT_3=y CFG_HMAC_64_1024_RANGE=y CFG_FAULT_MITIGATION=n CFG_TA_OPTEE_CORE_API_COMPAT_1_1=y"
     flags+=" CFG_DT=y"
     flags+=" PLATFORM=${ti_plat}"
+    if [[ -n "${ti_uart}" ]]; then
+	    flags+=" CFG_CONSOLE_UART=${ti_uart}"
+    fi
 
     optee_flags_ref="${flags}"
 }
