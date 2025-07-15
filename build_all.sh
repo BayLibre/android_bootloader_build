@@ -31,6 +31,11 @@ function build_all {
 
     # tispl
     build_tispl "$@"
+
+    # secure package
+    if [[ "${mode}" == "factory" ]]; then
+        generate_secure_package "$1" "${out_dir}"
+    fi
 }
 
 if [ "$0" = "$BASH_SOURCE" ]; then

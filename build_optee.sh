@@ -6,6 +6,7 @@ set -o pipefail
 
 SRC=$(dirname "$(readlink -e "$0")")
 source "${SRC}/utils.sh"
+source "${SRC}/secure.sh"
 
 OPTEE="${ROOT}/optee-os"
 
@@ -32,6 +33,17 @@ function get_optee_flags {
 
         # By default enabling RPMB in factory mode
         rpmb="true"
+
+        # sign TA
+        local ta_key=""
+        local ta_pub_key=""
+        get_ta_keys "$1" ta_key ta_pub_key
+        if [ -n "${ta_key}" ] && [ -n "${ta_pub_key}" ]; then
+            flags+=" TA_SIGN_KEY=${ta_key} TA_PUBLIC_KEY=${ta_pub_key}"
+        fi
+
+        # AVB TA
+        flags+=" CFG_IN_TREE_EARLY_TAS=avb/023f8f1a-292a-432b-8fc4-de8471358067"
     esac
 
     # RPMB
@@ -130,6 +142,8 @@ function build_optee {
     local mode="${3:-release}"
     local out_dir=$(out_dir "$1" "${mode}")
     local optee_flags=""
+    local optee_out_dir="${OPTEE}/out/arm-plat-k3"
+    local early_ta_paths=($(config_value "$1" optee.early_ta_paths))
 
     display_current_build "$1" "optee" "${mode}"
 
@@ -143,6 +157,18 @@ function build_optee {
 
     aarch64_env
     gnueabihf_env
+
+    # build early TA
+    if [ "${#early_ta_paths[@]}" -gt 0 ]; then
+        make -j"$(nproc)" ${optee_flags} ta_dev_kit
+        export TA_DEV_KIT_DIR="${optee_out_dir}/export-ta_arm64"
+
+        early_ta_paths=("${early_ta_paths[@]/#/${ROOT}/}")
+        for early_ta in "${early_ta_paths[@]}"; do
+            build_ta "${optee_flags}" "${early_ta}"
+            optee_flags+=" EARLY_TA_PATHS+=${early_ta}"
+        done
+    fi
 
     make -j"$(nproc)" PLATFORM="${ti_plat}" ${optee_flags}
 
