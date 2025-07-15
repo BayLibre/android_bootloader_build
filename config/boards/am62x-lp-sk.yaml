@@ -13,6 +13,8 @@ spd: opteed
 
 target_board: lite
 
+ti_lpm: true
+
 optee:
   flags: CFG_ARM64_core=y
   optee_ta_path: vendor/ti/am62x/optee/ta

@@ -18,9 +18,12 @@ function build_bl31 {
     local TI_PLAT=$(config_value "$1" plat)
     local TI_SPD=$(config_value "$1" spd)
     local TI_TARGET=$(config_value "$1" target_board)
+    local TI_LPM=$(config_value "$1" ti_lpm)
     local clean="${2:-false}"
     local mode="${3:-release}"
     local out_dir=$(out_dir "$1" "${mode}")
+
+    local EXTRA_FLAGS=()
 
     ! [ -d "${out_dir}" ] && mkdir -p "${out_dir}"
 
@@ -30,7 +33,11 @@ function build_bl31 {
     export ARCH=aarch64
     aarch64_env
 
-    make -j$(nproc) E=0 PLAT="${TI_PLAT}" TARGET_BOARD="${TI_TARGET}" SPD="${TI_SPD}" CFLAGS+="-DK3_PM_SYSTEM_SUSPEND=1 "
+    if [[ "${TI_LPM}" == True ]]; then
+	    EXTRA_FLAGS+=(CFLAGS+='-DK3_PM_SYSTEM_SUSPEND=1')
+    fi
+
+    make -j$(nproc) E=0 PLAT="${TI_PLAT}" TARGET_BOARD="${TI_TARGET}" SPD="${TI_SPD}" ${EXTRA_FLAGS[@]}
 
     pushd "build/"${TI_PLAT}"/"${TI_TARGET}"/release"
 
