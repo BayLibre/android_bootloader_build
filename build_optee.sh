@@ -16,7 +16,7 @@ function clean_optee {
 }
 
 function get_optee_flags {
-    local ti_plat=$(config_value "$1" plat)
+    local ti_plat=$(config_value "$1" optee.plat)
     local flags=$(config_value "$1" optee.flags)
     local ti_uart=$(config_value "$1" uart)
     local mode="$2"

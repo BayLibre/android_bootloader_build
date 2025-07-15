@@ -18,6 +18,7 @@ ti_lpm: true
 optee:
   flags: CFG_ARM64_core=y
   optee_ta_path: vendor/ti/am62x/optee/ta
+  plat: k3-am62x
 
 android:
   binaries_path: vendor/ti/am62x/bootloader/2024.04/am62x-lp-sk
