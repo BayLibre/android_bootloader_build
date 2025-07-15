@@ -19,6 +19,7 @@ function get_optee_flags {
     local ti_plat=$(config_value "$1" optee.plat)
     local flags=$(config_value "$1" optee.flags)
     local ti_uart=$(config_value "$1" uart)
+    local rpmb=$(config_value "$1" optee.rpmb)
     local mode="$2"
     local -n optee_flags_ref="$3"
 
@@ -28,7 +29,16 @@ function get_optee_flags {
         "debug") flags+=" DEBUG=1" ;;
         "factory")
             flags+=" DEBUG=0 CFG_TEE_CORE_LOG_LEVEL=0 CFG_UART_ENABLE=n"
+
+        # By default enabling RPMB in factory mode
+        rpmb="true"
     esac
+
+    # RPMB
+    if [ "${rpmb}" == true ]; then
+        flags+=" CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y"
+    fi
+
     flags+=" CFG_RSA_PUB_EXPONENT_3=y CFG_HMAC_64_1024_RANGE=y CFG_FAULT_MITIGATION=n CFG_TA_OPTEE_CORE_API_COMPAT_1_1=y"
     flags+=" CFG_DT=y"
     flags+=" PLATFORM=${ti_plat}"

@@ -19,6 +19,7 @@ optee:
   flags: CFG_ARM64_core=y
   optee_ta_path: vendor/ti/j784s4/optee/ta
   plat: k3-j784s4
+  rpmb: false
 
 android:
   binaries_path: vendor/ti/j784s4/bootloader/2025.01/am69-sk
