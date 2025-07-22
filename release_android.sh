@@ -38,27 +38,15 @@ function copy_binaries {
     local gp=$(config_value "$3" secure.gp)
     local hsfs=$(config_value "$3" secure.hsfs)
     local mode="$4"
-    if [[ "${mode}" == "debug" ]]; then
-        if [[ "${gp}" == "True" ]]; then
-            cp "${ti_out}/tiboot3-debug-gp.bin" "${ti_android_out}/tiboot3.bin"
-        fi
-        if [[ "${hsfs}" == "True" ]]; then
-            cp "${ti_out}/tiboot3-debug-hsfs.bin" "${ti_android_out}/tiboot3-hsfs.bin"
-        fi
-	    cp "${ti_out}/tispl-debug.bin" "${ti_android_out}/tispl.bin"
-	    cp "${ti_out}/u-boot-debug.img" "${ti_android_out}/u-boot.img"
+    if [[ "${gp}" == "True" ]]; then
+        cp "${ti_out}/tiboot3-"${mode}"-gp.bin" "${ti_android_out}/"
     fi
+    if [[ "${hsfs}" == "True" ]]; then
+        cp "${ti_out}/tiboot3-"${mode}"-hsfs.bin" "${ti_android_out}/"
+    fi
+    cp "${ti_out}/tispl-"${mode}".bin" "${ti_android_out}/"
+    cp "${ti_out}/u-boot-"${mode}".img" "${ti_android_out}/"
 
-    if [[ "${mode}" == "release" ]]; then
-        if [[ "${gp}" == "True" ]]; then
-            cp "${ti_out}/tiboot3-release-gp.bin" "${ti_android_out}/tiboot3.bin"
-        fi
-        if [[ "${hsfs}" == "True" ]]; then
-            cp "${ti_out}/tiboot3-release-hsfs.bin" "${ti_android_out}/tiboot3-hsfs.bin"
-        fi
-	    cp "${ti_out}/tispl-release.bin" "${ti_android_out}/tispl.bin"
-	    cp "${ti_out}/u-boot-release.img" "${ti_android_out}/u-boot.img"
-    fi
 }
 
 function usage {
@@ -72,6 +60,7 @@ Options:
   --commit   (OPTIONAL) commit binaries in AOSP
   --config   (OPTIONAL) release ONLY for this board config file
   --help     (OPTIONAL) display usage
+  --mode     (OPTIONAL) [release|debug|factory] build only one mode
   --no-build (OPTIONAL) don't rebuild the images
   --silent   (OPTIONAL) silent build commands
 
@@ -84,9 +73,9 @@ function main {
     local config=""
     local build=true
     local silent=false
-    local mode_list=(release)
+    local mode_list=(debug release)
 
-    local opts_args="aosp:,commit,config:,help,no-build,silent"
+    local opts_args="aosp:,commit,config:,help,mode:,no-build,silent"
     local opts=$(getopt -o '' -l "${opts_args}" -- "$@")
     eval set -- "${opts}"
 
@@ -99,6 +88,7 @@ function main {
                 [ -z "${config}" ] && error_usage_exit "Cannot find board config file"
                 shift 2 ;;
             --help) usage; exit 0 ;;
+            --mode) mode_list=("$2"); shift 2 ;;
             --silent) silent=true; shift ;;
             --no-build) build=false; shift ;;
             --) shift; break ;;
@@ -142,20 +132,22 @@ function main {
             fi
             ! [ -d "${aosp}/${ti_binaries_path}" ] && mkdir -p "${aosp}/${ti_binaries_path}"
             copy_binaries "${out_dir}" "${aosp}/${ti_binaries_path}" "${ti_config}" "${mode}"
+
+            # Build Trusted Applications
+            mkdir -p "${aosp}/${optee_ta_path}"
+            if [[ "${silent}" == true ]]; then
+                build_android_ta "${ti_config}" "true" "${mode}" &> /dev/null
+            else
+                build_android_ta "${ti_config}" "true" "${mode}"
+            fi
+            pushd "${out_dir}/optee-ta/"
+            mkdir -p "${aosp}/${optee_ta_path}/${mode}"
+            cp -r * "${aosp}/${optee_ta_path}/${mode}"
+            popd
         done
         commit_title_prefix=$(board_name ${ti_config})
         add_commit_msg commits_msg "${commit_title_prefix}" "${aosp}/${ti_binaries_path}"
 
-        # Build Trusted Applications
-        mkdir -p "${aosp}/${optee_ta_path}"
-        if [[ "${silent}" == true ]]; then
-            build_android_ta "${ti_config}" "true" "release" &> /dev/null
-        else
-            build_android_ta "${ti_config}" "true" "release"
-        fi
-        pushd "${out_dir}/optee-ta/"
-        cp -r * "${aosp}/${optee_ta_path}"
-        popd
     done
     popd
 

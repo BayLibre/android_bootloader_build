@@ -80,7 +80,7 @@ $ $(basename "$0") --config=board.yaml
 Options:
   --config   board config file
   --clean    (OPTIONAL) clean before build
-  --mode     (OPTIONAL) [release|debug] mode (default: release)
+  --mode     (OPTIONAL) [release|debug|factory] mode (default: release)
   --help     (OPTIONAL) display usage
 DELIM__
 }

@@ -36,6 +36,11 @@ function build_tispl {
     if [[ "${#DEFCONFIG_FRAGMENTS[@]}" -gt 0 ]]; then
         make -j$(nproc) ${DEFCONFIG_FRAGMENTS[@]}
     fi
+    if [[ "${mode}" == "factory" ]]; then
+        cp "${BUILD}/config/defconfig_fragment/uboot-factory.config" configs/uboot-factory.config
+        make -j$(nproc) uboot-factory.config
+        rm configs/uboot-factory.config
+    fi    
     make -j$(nproc) BL31="${out_dir}/bl31-${mode}.bin" TEE="${out_dir}/tee-${mode}.bin"
 
     cp tispl.bin "${out_dir}"/tispl-"${mode}".bin

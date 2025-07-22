@@ -4,7 +4,7 @@ BUILD=$(dirname "$(readlink -e "$0")")
 ROOT=$(readlink -e "${BUILD}/../")
 OUT="${ROOT}/out"
 TOOLCHAINS="${SYSTEM_WIDE_TOOLCHAINS:-${ROOT}/toolchains}"
-MODES=("release" "debug")
+MODES=("release" "debug" "factory")
 
 INIT_PATH=$PATH
 
@@ -125,7 +125,7 @@ $ $(basename "$0") --config=config/boards/am62x.yaml
 Options:
   --config   board config file
   --clean    (OPTIONAL) clean before build
-  --mode     (OPTIONAL) [release|debug] mode (default: release)
+  --mode     (OPTIONAL) [release|debug|factory] mode (default: release)
   --help     (OPTIONAL) display usage
 DELIM__
 }
