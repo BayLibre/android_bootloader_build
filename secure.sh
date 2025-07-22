@@ -9,6 +9,10 @@ source "${SRC}/utils.sh"
 
 KEYS="${BUILD}/.keys"
 
+# Android Verified Boot (AVB)
+AVB_KEY="avb.key"
+AVB_PUB_KEY="avb_pub.key"
+
 # Trusted Applications
 TA_KEY="ta.pem"
 TA_PUB_KEY="ta_pub.pem"
@@ -57,6 +61,53 @@ function generate_ta_keys {
     printf "TA keys generated here:\n%s\n%s\n" "${ta_key}" "${ta_pub_key}"
 }
 
+function get_avb_key {
+    local avb_key_config=$(config_value "$1" secure.avb_key)
+    local -n avb_key_ref="$2"
+
+    if [ -n "${avb_key_config}" ]; then
+        if [ -a "${avb_key_config}" ]; then
+            avb_key_ref="${avb_key_config}"
+        else
+            error_exit "AVB key not found: ${avb_key_config}"
+        fi
+    else
+        if [ -a "${KEYS}/${AVB_KEY}" ]; then
+            avb_key_ref="${KEYS}/${AVB_KEY}"
+        fi
+    fi
+}
+
+function get_avb_pub_key {
+    local avb_pub_key_config=$(config_value "$1" secure.avb_pub_key)
+    local -n avb_pub_key_ref="$2"
+
+    if [ -n "${avb_pub_key_config}" ]; then
+        if [ -a "${avb_pub_key_config}" ]; then
+            avb_pub_key_ref="${avb_pub_key_config}"
+        else
+            error_exit "AVB public key not found: ${avb_pub_key_config}"
+        fi
+    else
+        if [ -a "${KEYS}/${AVB_PUB_KEY}" ]; then
+            avb_pub_key_ref="${KEYS}/${AVB_PUB_KEY}"
+        fi
+    fi
+}
+
+function generate_avb_keys {
+    local avb_key="${KEYS}/${AVB_KEY}"
+    local avb_pub_key="${KEYS}/${AVB_PUB_KEY}"
+
+    ! [ -d "${KEYS}" ] && mkdir -p "${KEYS}"
+
+    avbtool_env
+    openssl genrsa -out "${avb_key}" 4096
+    avbtool extract_public_key --key "${avb_key}" --output "${avb_pub_key}"
+
+    printf "AVB keys generated here:\n%s\n%s\n" "${avb_key}" "${avb_pub_key}"
+}
+
 function generate_secure_package {
     local board=$(board_name "$1")
     local plat=$(config_value "$1" plat)
@@ -77,6 +128,18 @@ function generate_secure_package {
     fi
     if [ -n "${ta_pub_key}" ]; then
         zip -ju "${package}" "${ta_pub_key}"
+    fi
+
+    # add Android Verified Boot keys
+    local avb_key=""
+    local avb_pub_key=""
+    get_avb_key "$1" avb_key
+    if [ -n "${avb_key}" ]; then
+        zip -ju "${package}" "${avb_key}"
+    fi
+    get_avb_pub_key "$1" avb_pub_key
+    if [ -n "${avb_pub_key}" ]; then
+        zip -ju "${package}" "${avb_pub_key}"
     fi
 
     mv "${package}" "${out_dir}/"

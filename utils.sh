@@ -71,6 +71,10 @@ function check_aarch64 {
     fi
 }
 
+function avbtool_env {
+    export PATH="${ROOT}/prebuilts/build-tools/linux-x86/bin/:$PATH"
+}
+
 function clear_vars {
     export PATH=$INIT_PATH
     unset ARCH

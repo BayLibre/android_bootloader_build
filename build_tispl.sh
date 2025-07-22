@@ -6,6 +6,7 @@ set -o pipefail
 
 SRC=$(dirname "$(readlink -e "$0")")
 source "${SRC}/utils.sh"
+source "${SRC}/secure.sh"
 
 UBOOT="${ROOT}/u-boot"
 BINMAN_INDIRS="${ROOT}/ti-linux-firmware"
@@ -36,6 +37,18 @@ function build_tispl {
     if [[ "${#DEFCONFIG_FRAGMENTS[@]}" -gt 0 ]]; then
         make -j$(nproc) ${DEFCONFIG_FRAGMENTS[@]}
     fi
+
+    # avb key only on release/factory
+    if ! [[ "${mode}" == "debug" ]]; then
+        local avb_pub_key=""
+        get_avb_pub_key "$1" avb_pub_key
+        if [ -n "${avb_pub_key}" ]; then
+            cp "${avb_pub_key}" "${DEFCONFIG}.avbpubkey"
+            avb_pub_key="${DEFCONFIG}.avbpubkey"
+            sed -i 's/^\(CONFIG_AVB_PUBKEY_FILE=\).*/\1\"'${avb_pub_key}'\"/' .config
+        fi
+    fi
+
     if [[ "${mode}" == "factory" ]]; then
         cp "${BUILD}/config/defconfig_fragment/uboot-factory.config" configs/uboot-factory.config
         make -j$(nproc) uboot-factory.config
