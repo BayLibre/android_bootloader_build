@@ -1,0 +1,149 @@
+{
+    "version": "1.0",
+    "format": "gpt",
+    "description": "Android partition layout for Spacemit K1 with A/B slots",
+    "partitions": [
+        {
+            "name": "bootinfo",
+            "hidden": true,
+            "offset": "0K",
+            "size": "512",
+            "image": "factory/bootinfo_sd.bin",
+            "holes": "{\"(80;512)\"}"
+        },
+        {
+            "name": "fsbl",
+            "offset": "128K",
+            "size": "256K",
+            "image": "factory/FSBL.bin"
+        },
+        {
+            "name": "env",
+            "offset": "384K",
+            "size": "128K",
+            "image": "env.bin"
+        },
+        {
+            "name": "opensbi",
+            "offset": "512K",
+            "size": "512K",
+            "image": "fw_dynamic.itb"
+        },
+        {
+            "name": "uboot",
+            "offset": "1M",
+            "size": "3M",
+            "image": "u-boot.itb"
+        },
+        {
+            "name": "misc",
+            "offset": "4M",
+            "size": "1M",
+            "description": "Boot Control Block (BCB) for Android boot mode"
+        },
+        {
+            "name": "vbmeta_a",
+            "offset": "5M",
+            "size": "1M",
+            "image": "vbmeta.img",
+            "description": "AVB metadata slot A"
+        },
+        {
+            "name": "vbmeta_b",
+            "size": "1M",
+            "description": "AVB metadata slot B"
+        },
+        {
+            "name": "boot_a",
+            "offset": "7M",
+            "size": "40M",
+            "image": "boot.img",
+            "description": "Android boot image slot A"
+        },
+        {
+            "name": "boot_b",
+            "size": "40M",
+            "description": "Android boot image slot B"
+        },
+        {
+            "name": "init_boot_a",
+            "size": "8M",
+            "image": "init_boot.img",
+            "description": "Init boot image slot A (ramdisk)"
+        },
+        {
+            "name": "init_boot_b",
+            "size": "8M",
+            "description": "Init boot image slot B"
+        },
+        {
+            "name": "vendor_boot_a",
+            "size": "32M",
+            "image": "vendor_boot.img",
+            "description": "Vendor boot image slot A"
+        },
+        {
+            "name": "vendor_boot_b",
+            "size": "32M",
+            "description": "Vendor boot image slot B"
+        },
+        {
+            "name": "dtbo_a",
+            "size": "8M",
+            "image": "dtbo.img",
+            "description": "Device tree overlay slot A"
+        },
+        {
+            "name": "dtbo_b",
+            "size": "8M",
+            "description": "Device tree overlay slot B"
+        },
+        {
+            "name": "vbmeta_vendor_dlkm_a",
+            "size": "64K",
+            "description": "AVB metadata for vendor_dlkm slot A"
+        },
+        {
+            "name": "vbmeta_vendor_dlkm_b",
+            "size": "64K",
+            "description": "AVB metadata for vendor_dlkm slot B"
+        },
+        {
+            "name": "vbmeta_system_dlkm_a",
+            "size": "64K",
+            "description": "AVB metadata for system_dlkm slot A"
+        },
+        {
+            "name": "vbmeta_system_dlkm_b",
+            "size": "64K",
+            "description": "AVB metadata for system_dlkm slot B"
+        },
+        {
+            "name": "frp",
+            "size": "512K",
+            "description": "Factory Reset Protection"
+        },
+        {
+            "name": "persist",
+            "size": "32M",
+            "description": "Persistent data partition"
+        },
+        {
+            "name": "super",
+            "offset": "256M",
+            "size": "4608M",
+            "image": "super.img",
+            "description": "Super partition (system, vendor, vendor_dlkm, system_dlkm)"
+        },
+        {
+            "name": "metadata",
+            "size": "64M",
+            "description": "Encryption metadata (F2FS)"
+        },
+        {
+            "name": "userdata",
+            "size": "-",
+            "description": "User data partition (F2FS)"
+        }
+    ]
+}

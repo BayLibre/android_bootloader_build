@@ -1,0 +1,15 @@
+plat: spacemit
+
+opensbi:
+  platform: generic
+  defconfig: k1_defconfig
+
+uboot:
+  defconfig: k1_defconfig
+  defconfig_fragments: k1_android.config
+
+android:
+  binaries_path: vendor/spacemit/k1/bootloader
+
+secure:
+  avb: true
