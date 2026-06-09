@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "format": "mtd",
+  "description": "SPI-NOR bootloader layout for Spacemit K1 boards that boot from NOR (MUSE-Pi-Pro). Android stays on eMMC (partition_android.json).",
+  "partitions": [
+    {
+      "name": "bootinfo",
+      "offset": "0",
+      "size": "64K",
+      "image": "factory/bootinfo_spinor.bin"
+    },
+    {
+      "name": "private",
+      "offset": "64K",
+      "size": "64K"
+    },
+    {
+      "name": "fsbl",
+      "offset": "128K",
+      "size": "256K",
+      "image": "factory/FSBL.bin"
+    },
+    {
+      "name": "env",
+      "offset": "384K",
+      "size": "64K",
+      "image": "env.bin"
+    },
+    {
+      "name": "opensbi",
+      "offset": "448K",
+      "size": "192K",
+      "image": "fw_dynamic.itb"
+    },
+    {
+      "name": "uboot",
+      "offset": "640K",
+      "size": "-",
+      "image": "u-boot.itb"
+    }
+  ]
+}
