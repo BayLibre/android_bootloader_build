@@ -1,0 +1,32 @@
+# SpacemiT MusePi Pro (RISC-V K1, same SoC as the BananaPi BPI-F3).
+#
+# The K1 U-Boot is board-generic: a single binary (built from k1_defconfig with
+# CONFIG_MULTI_DTB_FIT) selects the board device-tree at runtime from
+# ${product_name} (see board/spacemit/k1-x/k1-x.env "dtb_env"). So this build is
+# the same generic K1 bootloader as spacemit-k1.yaml; the point of a separate
+# board config is a distinct AOSP binaries_path so both boards' bootloaders
+# coexist under vendor/spacemit/<board>/bootloader and the flash flow can pick
+# per board.
+#
+# NOTE: for the MusePi Pro to actually init DRAM + boot, its ${product_name}
+# must be handled by the U-Boot board-select (dtb_env) and its DDR/board DTS
+# present in pi-u-boot (k1-x_MUSE-Pi*.dts). If the Pro is electrically the
+# MusePi, the existing k1-x_MUSE-Pi DTS covers it; a distinct "Pro" variant
+# needs its own k1-x_MUSE-Pi-Pro.dts added there (requires the board's DDR
+# spec) — that is a pi-u-boot change, not this config.
+
+plat: spacemit
+
+opensbi:
+  platform: generic
+  defconfig: k1_defconfig
+
+uboot:
+  defconfig: k1_defconfig
+  defconfig_fragments: k1_android.config
+
+android:
+  binaries_path: vendor/spacemit/musepi-pro/bootloader
+
+secure:
+  avb: true
