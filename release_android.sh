@@ -8,9 +8,9 @@ SRC=$(dirname "$(readlink -e "$0")")
 source "${SRC}/build_all.sh"
 source "${SRC}/commit-binaries.sh"
 
-# SpacemiT K1 projects in this repo tree
-PROJECTS_AIOT=("pi-opensbi" "pi-u-boot" "build-bootloaders")
-PROJECTS_REMOTES="spacemit github"
+# Alibaba a210 projects in this repo tree
+PROJECTS_AIOT=("opensbi" "u-boot" "build-bootloaders")
+PROJECTS_REMOTES="baydroid"
 
 function add_commit_msg {
     local -n commits_msg_ref="$1"
@@ -31,34 +31,6 @@ function add_commit_msg {
         commits_msg_ref+=(["${toplevel}"]="${title_prefix}")
     fi
     popd
-}
-
-function copy_binaries {
-    local out="$1"
-    local android_out="$2"
-    local mode="$3"
-
-    # OpenSBI firmware
-    [ -f "${out}/fw_dynamic-${mode}.bin" ] && cp "${out}/fw_dynamic-${mode}.bin" "${android_out}/"
-    [ -f "${out}/fw_dynamic.itb" ]         && cp -f "${out}/fw_dynamic.itb"     "${android_out}/"
-
-    # U-Boot
-    if [ -f "${out}/u-boot-${mode}.itb" ]; then
-        cp "${out}/u-boot-${mode}.itb" "${android_out}/"
-    elif [ -f "${out}/u-boot-${mode}.bin" ]; then
-        cp "${out}/u-boot-${mode}.bin" "${android_out}/"
-    fi
-    [ -f "${out}/u-boot-spl-${mode}.bin" ] && cp "${out}/u-boot-spl-${mode}.bin" "${android_out}/"
-    [ -f "${out}/u-boot-${mode}.dtb" ]     && cp "${out}/u-boot-${mode}.dtb"     "${android_out}/"
-    [ -f "${out}/env-${mode}.bin" ]        && cp "${out}/env-${mode}.bin"       "${android_out}/"
-
-    # Flash-ready files (factory blobs, partition layout)
-    if [ -d "${out}/factory" ]; then
-        mkdir -p "${android_out}/factory"
-        cp -f "${out}/factory"/* "${android_out}/factory/"
-    fi
-    [ -f "${out}/partition_android.json" ] && cp -f "${out}/partition_android.json" "${android_out}/"
-    [ -f "${out}/partition_nor.json" ]     && cp -f "${out}/partition_nor.json"     "${android_out}/"
 }
 
 function usage {
@@ -142,7 +114,7 @@ function main {
                 fi
             fi
             ! [ -d "${aosp}/${binaries_path}" ] && mkdir -p "${aosp}/${binaries_path}"
-            copy_binaries "${out_dir}" "${aosp}/${binaries_path}" "${mode}"
+            cp "${out_dir}/"* "${aosp}/${binaries_path}"
         done
         commit_title_prefix=$(board_name ${board_config})
         add_commit_msg commits_msg "${commit_title_prefix}" "${aosp}/${binaries_path}"
